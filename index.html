@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Your Page Title</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <button id="createProductBtn" class="btn">Create New Product</button>
+
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModalBtn">X</span>
+
+            <h2 id="modalTitle">Create a New Product</h2>
+            <br /><br />
+            <label for="productName">Product Name</label>
+            <input id="productName" name="productName" type="text" />
+            <br /><br />
+            <label for="productPrice">Product Price</label>
+            <input id="productPrice" name="productPrice" type="number" />
+            <br /><br />
+            <label for="productDescription">Product Description</label>
+            <textarea id="productDescription" name="productDescription"></textarea>
+            <br /><br />
+            <label for="productImage">Product Image</label>
+            <input id="productImage" name="productImage" type="text" />
+            <br /><br />
+            <button id="modalBtn" class="btn">Create Product</button>
+        </div>
+    </div>
+
+    <div id="productList"></div>
+</body>
+</html>
