@@ -9,6 +9,7 @@ const productImage = document.getElementById("productImage");
 
 const modalBtn = document.getElementById("modalBtn");
 const productList = document.getElementById("productList");
+const template = document.getElementById("productCardTemplate");
 
 let editMode = false;
 let editingCard = null;
@@ -41,19 +42,13 @@ modalBtn.addEventListener("click", () => {
             modalBtn.textContent = "Create Product";
             document.getElementById("modalTitle").textContent = "Create a New Product";
         } else {
-            const productCard = document.createElement("div");
-            productCard.classList.add("product-card");
+            const productCard = template.content.cloneNode(true).children[0];
 
-            productCard.innerHTML = `
-                <img src="${imageValue}" alt="${nameValue}" />
-                <h3>${nameValue}</h3>
-                <p class="description">${descriptionValue}</p>
-                <p class="price">$${priceValue}</p>
-                <div class="card-buttons">
-                    <button class="edit-btn">Edit</button>
-                    <button class="delete-btn">Delete</button>
-                </div>
-            `;
+            productCard.querySelector("img").src = imageValue;
+            productCard.querySelector("img").alt = nameValue;
+            productCard.querySelector("h3").textContent = nameValue;
+            productCard.querySelector("p.description").textContent = descriptionValue;
+            productCard.querySelector("p.price").textContent = `$${priceValue}`;
 
             productCard.querySelector(".delete-btn").addEventListener("click", () => {
                 productCard.remove();
