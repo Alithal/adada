@@ -4,41 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Store</title>
+    <meta name="description" content="Simple product store to create, edit, and manage products.">
+    <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <script src="script.js" defer></script>
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <header class="header">
             <h1>Product Store</h1>
-            <button id="createProductBtn" class="btn">Create New Product</button>
-        </div>
+            <button id="createProductBtn" class="btn" aria-label="Create a new product">Create New Product</button>
+        </header>
     </div>
 
-    <div id="productModal" class="modal">
+    <div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-content">
-            <span class="close" id="closeModalBtn">X</span>
+            <span class="close" id="closeModalBtn" role="button" tabindex="0" aria-label="Close modal">X</span>
             <h2 id="modalTitle">Create a New Product</h2>
             <label for="productName">Product Name</label>
-            <input id="productName" name="productName" type="text" />
+            <input id="productName" name="productName" type="text" required />
             <label for="productPrice">Product Price</label>
-            <input id="productPrice" name="productPrice" type="number" />
+            <input id="productPrice" name="productPrice" type="number" required />
             <label for="productDescription">Product Description</label>
-            <textarea id="productDescription" name="productDescription"></textarea>
-            <label for="productImage">Product Image</label>
-            <input id="productImage" name="productImage" type="text" />
+            <textarea id="productDescription" name="productDescription" required></textarea>
+            <label for="productImage">Product Image (URL)</label>
+            <input id="productImage" name="productImage" type="text" required />
             <button id="modalBtn" class="btn">Create Product</button>
         </div>
     </div>
 
-    <div id="productList" class="container"></div>
+    <main class="container">
+        <div id="productList" class="product-list"></div>
+    </main>
 
     <template id="productCardTemplate">
         <div class="product-card">
-            <img src="" alt="" />
-            <h3></h3>
-            <p class="description"></p>
-            <p class="price"></p>
+            <img src="placeholder.jpg" alt="Product image" />
+            <h3>Product Name</h3>
+            <p class="description">Product Description</p>
+            <p class="price">$0.00</p>
             <div class="card-buttons">
                 <button class="edit-btn">Edit</button>
                 <button class="delete-btn">Delete</button>

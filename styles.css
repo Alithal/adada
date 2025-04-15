@@ -77,6 +77,13 @@ textarea {
     background-color: #2980b9;
 }
 
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
 .product-card {
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -89,6 +96,7 @@ textarea {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    flex: 0 1 250px;
 }
 
 .product-card img {

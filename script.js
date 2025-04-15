@@ -1,18 +1,29 @@
 const createProductBtn = document.getElementById("createProductBtn");
 const productModal = document.getElementById("productModal");
 const closeModalBtn = document.getElementById("closeModalBtn");
+const modalBtn = document.getElementById("modalBtn");
 
 const productName = document.getElementById("productName");
 const productPrice = document.getElementById("productPrice");
 const productDescription = document.getElementById("productDescription");
 const productImage = document.getElementById("productImage");
 
-const modalBtn = document.getElementById("modalBtn");
 const productList = document.getElementById("productList");
 const template = document.getElementById("productCardTemplate");
 
 let editMode = false;
 let editingCard = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Clear the current product list in the DOM
+    productList.innerHTML = '';
+    
+    // Load and render products from localStorage
+    const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
+    storedProducts.forEach((productData) => {
+        createProductCard(productData);
+    });
+});
 
 createProductBtn.addEventListener("click", () => {
     resetModal();
@@ -30,44 +41,19 @@ modalBtn.addEventListener("click", () => {
     const imageValue = productImage.value.trim();
 
     if (nameValue && priceValue && descriptionValue && imageValue) {
+        const productData = {
+            name: nameValue,
+            price: parseFloat(priceValue),
+            description: descriptionValue,
+            image: imageValue,
+        };
+
         if (editMode && editingCard) {
-            editingCard.querySelector("h3").textContent = nameValue;
-            editingCard.querySelector("p.description").textContent = descriptionValue;
-            editingCard.querySelector("p.price").textContent = `$${priceValue}`;
-            editingCard.querySelector("img").src = imageValue;
-            editingCard.querySelector("img").alt = nameValue;
-
-            editMode = false;
-            editingCard = null;
-            modalBtn.textContent = "Create Product";
-            document.getElementById("modalTitle").textContent = "Create a New Product";
+            const productId = editingCard.dataset.id;
+            productData.id = productId;
+            updateProduct(productData);
         } else {
-            const productCard = template.content.cloneNode(true).children[0];
-
-            productCard.querySelector("img").src = imageValue;
-            productCard.querySelector("img").alt = nameValue;
-            productCard.querySelector("h3").textContent = nameValue;
-            productCard.querySelector("p.description").textContent = descriptionValue;
-            productCard.querySelector("p.price").textContent = `$${priceValue}`;
-
-            productCard.querySelector(".delete-btn").addEventListener("click", () => {
-                productCard.remove();
-            });
-
-            productCard.querySelector(".edit-btn").addEventListener("click", () => {
-                productName.value = nameValue;
-                productPrice.value = priceValue;
-                productDescription.value = descriptionValue;
-                productImage.value = imageValue;
-
-                editMode = true;
-                editingCard = productCard;
-                modalBtn.textContent = "Update Product";
-                document.getElementById("modalTitle").textContent = "Edit Product";
-                productModal.style.display = "flex";
-            });
-
-            productList.appendChild(productCard);
+            createProductCard(productData);
         }
 
         resetModal();
@@ -77,9 +63,85 @@ modalBtn.addEventListener("click", () => {
     }
 });
 
+function createProductCard(productData) {
+    const productCard = template.content.cloneNode(true).children[0];
+    productCard.querySelector("img").src = productData.image;
+    productCard.querySelector("img").alt = productData.name;
+    productCard.querySelector("h3").textContent = productData.name;
+    productCard.querySelector("p.description").textContent = productData.description;
+    productCard.querySelector("p.price").textContent = `$${productData.price}`;
+    productCard.dataset.id = productData.id || Date.now();
+
+    productCard.querySelector(".edit-btn").addEventListener("click", () => {
+        productName.value = productData.name;
+        productPrice.value = productData.price;
+        productDescription.value = productData.description;
+        productImage.value = productData.image;
+
+        editMode = true;
+        editingCard = productCard;
+        modalBtn.textContent = "Update Product";
+        document.getElementById("modalTitle").textContent = "Edit Product";
+        productModal.style.display = "flex";
+    });
+
+    productCard.querySelector(".delete-btn").addEventListener("click", () => {
+        deleteProduct(productCard, productData.id);
+    });
+
+    productList.appendChild(productCard);
+
+    saveToLocalStorage(productData);
+}
+
+function saveToLocalStorage(productData) {
+    const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
+    const productIndex = storedProducts.findIndex((product) => product.id === productData.id);
+
+    if (productIndex === -1) {
+        // Product doesn't exist, add it to the list
+        storedProducts.push(productData);
+        localStorage.setItem("products", JSON.stringify(storedProducts));
+    } else {
+        // Update existing product if it exists
+        storedProducts[productIndex] = productData;
+        localStorage.setItem("products", JSON.stringify(storedProducts));
+    }
+}
+
+function updateProduct(updatedProductData) {
+    const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
+    const index = storedProducts.findIndex((product) => product.id == updatedProductData.id);
+
+    if (index !== -1) {
+        storedProducts[index] = updatedProductData;
+        localStorage.setItem("products", JSON.stringify(storedProducts));
+
+        editingCard.querySelector("h3").textContent = updatedProductData.name;
+        editingCard.querySelector("p.description").textContent = updatedProductData.description;
+        editingCard.querySelector("p.price").textContent = `$${updatedProductData.price}`;
+        editingCard.querySelector("img").src = updatedProductData.image;
+    }
+
+    resetModal();
+    productModal.style.display = "none";
+}
+
+function deleteProduct(productCard, productId) {
+    const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
+    const updatedProducts = storedProducts.filter((product) => product.id !== productId);
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
+
+    productCard.remove();
+}
+
 function resetModal() {
     productName.value = "";
     productPrice.value = "";
     productDescription.value = "";
     productImage.value = "";
+    editMode = false;
+    editingCard = null;
+    modalBtn.textContent = "Create Product";
+    document.getElementById("modalTitle").textContent = "Create a New Product";
 }
