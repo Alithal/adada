@@ -15,11 +15,7 @@ let editMode = false;
 let editingCard = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Clear the current product list in the DOM
-    productList.innerHTML = '';
-    
-    // Load and render products from localStorage
-    const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
+    const storedProducts = getAllProducts();
     storedProducts.forEach((productData) => {
         createProductCard(productData);
     });
@@ -46,13 +42,15 @@ modalBtn.addEventListener("click", () => {
             price: parseFloat(priceValue),
             description: descriptionValue,
             image: imageValue,
+            id: editMode && editingCard ? editingCard.dataset.id : Date.now().toString()
         };
 
         if (editMode && editingCard) {
-            const productId = editingCard.dataset.id;
-            productData.id = productId;
             updateProduct(productData);
         } else {
+            const allProducts = getAllProducts();
+            allProducts.push(productData);
+            saveAllProducts(allProducts);
             createProductCard(productData);
         }
 
@@ -70,7 +68,7 @@ function createProductCard(productData) {
     productCard.querySelector("h3").textContent = productData.name;
     productCard.querySelector("p.description").textContent = productData.description;
     productCard.querySelector("p.price").textContent = `$${productData.price}`;
-    productCard.dataset.id = productData.id || Date.now();
+    productCard.dataset.id = productData.id;
 
     productCard.querySelector(".edit-btn").addEventListener("click", () => {
         productName.value = productData.name;
@@ -90,32 +88,15 @@ function createProductCard(productData) {
     });
 
     productList.appendChild(productCard);
-
-    saveToLocalStorage(productData);
-}
-
-function saveToLocalStorage(productData) {
-    const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
-    const productIndex = storedProducts.findIndex((product) => product.id === productData.id);
-
-    if (productIndex === -1) {
-        // Product doesn't exist, add it to the list
-        storedProducts.push(productData);
-        localStorage.setItem("products", JSON.stringify(storedProducts));
-    } else {
-        // Update existing product if it exists
-        storedProducts[productIndex] = productData;
-        localStorage.setItem("products", JSON.stringify(storedProducts));
-    }
 }
 
 function updateProduct(updatedProductData) {
-    const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
-    const index = storedProducts.findIndex((product) => product.id == updatedProductData.id);
+    const allProducts = getAllProducts();
+    const index = allProducts.findIndex((p) => p.id === updatedProductData.id);
 
     if (index !== -1) {
-        storedProducts[index] = updatedProductData;
-        localStorage.setItem("products", JSON.stringify(storedProducts));
+        allProducts[index] = updatedProductData;
+        saveAllProducts(allProducts);
 
         editingCard.querySelector("h3").textContent = updatedProductData.name;
         editingCard.querySelector("p.description").textContent = updatedProductData.description;
@@ -128,10 +109,9 @@ function updateProduct(updatedProductData) {
 }
 
 function deleteProduct(productCard, productId) {
-    const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
-    const updatedProducts = storedProducts.filter((product) => product.id !== productId);
-    localStorage.setItem("products", JSON.stringify(updatedProducts));
-
+    const allProducts = getAllProducts();
+    const updatedProducts = allProducts.filter((product) => product.id !== productId);
+    saveAllProducts(updatedProducts);
     productCard.remove();
 }
 
@@ -144,4 +124,12 @@ function resetModal() {
     editingCard = null;
     modalBtn.textContent = "Create Product";
     document.getElementById("modalTitle").textContent = "Create a New Product";
+}
+
+function getAllProducts() {
+    return JSON.parse(localStorage.getItem("products")) || [];
+}
+
+function saveAllProducts(productsArray) {
+    localStorage.setItem("products", JSON.stringify(productsArray));
 }

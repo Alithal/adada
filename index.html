@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Product Store</title>
-    <meta name="description" content="Simple product store to create, edit, and manage products.">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta name="description" content="Simple product store to create, edit, and manage products."/>
+    <meta name="theme-color" content="#ffffff"/>
+    <link rel="stylesheet" href="styles.css"/>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
     <script src="script.js" defer></script>
 </head>
 <body>
@@ -16,6 +16,10 @@
             <h1>Product Store</h1>
             <button id="createProductBtn" class="btn" aria-label="Create a new product">Create New Product</button>
         </header>
+
+        <main>
+            <div id="productList" class="product-list"></div>
+        </main>
     </div>
 
     <div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -33,10 +37,6 @@
             <button id="modalBtn" class="btn">Create Product</button>
         </div>
     </div>
-
-    <main class="container">
-        <div id="productList" class="product-list"></div>
-    </main>
 
     <template id="productCardTemplate">
         <div class="product-card">
